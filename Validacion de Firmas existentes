@@ -1,0 +1,46 @@
+
+Select  T1.ClaveUsuario ClaveUsuarioBeta
+		, T2.ClaveUsuario ClaveUsuarioProduccion
+		, T1.NombreUsuario UsuarioBeta
+		, T2.NombreUsuario UsuarioProduccion
+		, Firma
+		, RutaFirma
+		, Concat(N'\\srvcorpfil\Sistemas SDL\Beta\FirmasUsuarios\', T1.ClaveUsuario , '.png') RutaValidacion
+		, 0 ExisteArchivo
+Into #Temporal
+from  SDL_BETA.SDL_Beta.dbo.CA_Usuarios T1
+Inner Join CTL.CA_usuarios T2
+	On T1.NumeroEmpleado = T2.NumeroEmpleado
+Where T1.Estatus = 1
+And T2.Firma Is Not Null
+
+DECLARE @Ruta NVARCHAR(255), @Existe INT;
+
+-- 3. Crear cursor para recorrer la tabla
+DECLARE cur CURSOR FOR
+SELECT RutaValidacion FROM #Temporal;
+
+OPEN cur;
+FETCH NEXT FROM cur INTO @Ruta;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    -- Ejecutar xp_fileexist con la ruta
+    EXEC xp_fileexist @Ruta, @Existe OUTPUT;
+
+    -- Actualizar la fila con el resultado
+    UPDATE #Temporal
+    SET ExisteArchivo = @Existe
+    WHERE RutaValidacion = @Ruta;
+
+    FETCH NEXT FROM cur INTO @Ruta;
+END
+
+CLOSE cur;
+DEALLOCATE cur;
+
+Select *
+From #Temporal
+
+Drop Table #Temporal
+
