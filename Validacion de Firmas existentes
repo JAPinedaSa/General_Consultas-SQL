@@ -1,4 +1,4 @@
-
+Ejecutar  en  Distribucion
 Select  T1.ClaveUsuario ClaveUsuarioBeta
 		, T2.ClaveUsuario ClaveUsuarioProduccion
 		, T1.NombreUsuario UsuarioBeta
