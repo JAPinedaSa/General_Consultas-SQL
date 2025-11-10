@@ -1,4 +1,3 @@
-Ejecutar  en  Distribucion
 Select  T1.ClaveUsuario ClaveUsuarioBeta
 		, T2.ClaveUsuario ClaveUsuarioProduccion
 		, T1.NombreUsuario UsuarioBeta
@@ -8,8 +7,8 @@ Select  T1.ClaveUsuario ClaveUsuarioBeta
 		, Concat(N'\\srvcorpfil\Sistemas SDL\Beta\FirmasUsuarios\', T1.ClaveUsuario , '.png') RutaValidacion
 		, 0 ExisteArchivo
 Into #Temporal
-from  SDL_BETA.SDL_Beta.dbo.CA_Usuarios T1
-Inner Join CTL.CA_usuarios T2
+from CA_Usuarios T1
+Inner Join Distribucion_pro.Distribucion.CTL.CA_usuarios T2
 	On T1.NumeroEmpleado = T2.NumeroEmpleado
 Where T1.Estatus = 1
 And T2.Firma Is Not Null
@@ -43,4 +42,5 @@ Select *
 From #Temporal
 
 Drop Table #Temporal
+
 
